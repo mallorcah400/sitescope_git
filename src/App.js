@@ -19,18 +19,18 @@ const SCHEDULES = ["Every hour", "Every 6 hours", "Daily", "Weekly", "Off"];
 
 // ─── CLAUDE API HELPER ────────────────────────────────────────────────────────
 async function askClaude(systemPrompt, userMessage) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userMessage }],
-    }),
-  });
-  const data = await res.json();
-  return data.content?.[0]?.text || "";
+  try {
+    const res = await fetch("/api/claude", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ system: systemPrompt, message: userMessage }),
+    });
+    if (!res.ok) return "AI insights unavailable — add ANTHROPIC_API_KEY to Vercel environment variables.";
+    const data = await res.json();
+    return data.text || "";
+  } catch {
+    return "AI insights unavailable — proxy not configured.";
+  }
 }
 
 // ─── GOOGLE API HELPER ────────────────────────────────────────────────────────
@@ -94,8 +94,7 @@ export default function App() {
     { id: "395152487", label: "Property 1" },
     { id: "286595968", label: "Property 2" },
     { id: "515895713", label: "Property 3" },
-    { id: "346017962", label: "Property 4" },
-    { id: "525357602", label: "Property 5" },
+    { id: "525357602", label: "Property 4" },
   ]);
   const [activeProperty, setActiveProperty] = useState(0);
 
@@ -160,7 +159,7 @@ export default function App() {
       // 1. PageSpeed (always public)
       bump(5);
       try {
-        const ps = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=AIzaSyD-no-key-needed`);
+        const ps = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=AIzaSyAY2dOVxNrMFw9h-hg8w22MUqhqXke7LOM`);
         // No key needed for basic use; fallback to simulated if blocked
         const psData = await ps.json();
         const cats = psData?.lighthouseResult?.categories;
@@ -223,15 +222,14 @@ export default function App() {
           const propResults = [];
           for (const prop of validProps) {
             try {
-              const ga = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${prop.id.trim()}:runReport`, {
+              const ga = await fetch(`/api/ga4`, {
                 method: "POST",
-                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  dateRanges: [{ startDate: daysAgo(28), endDate: daysAgo(1) }],
-                  metrics: [
-                    { name: "sessions" }, { name: "bounceRate" },
-                    { name: "averageSessionDuration" }, { name: "conversions" },
-                  ],
+                  token,
+                  propertyId: prop.id.trim(),
+                  startDate: daysAgo(28),
+                  endDate: daysAgo(1),
                 }),
               });
               const gaData = await ga.json();
