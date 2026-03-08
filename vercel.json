@@ -1,11 +1,10 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } },
-    { "src": "api/*.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "framework": "create-react-app",
+  "rewrites": [
+    { "source": "/api/claude", "destination": "/api/claude" },
+    { "source": "/api/ga4", "destination": "/api/ga4" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
