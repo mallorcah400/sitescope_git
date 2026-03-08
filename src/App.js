@@ -92,7 +92,6 @@ export default function App() {
   const [gadsId, setGadsId] = useState("");
   const [ga4Properties, setGa4Properties] = useState([
     { id: "395152487", label: "Austin Clean Spaces" },
-    { id: "286595968", label: "BOR Corp" },
     { id: "515895713", label: "BOR Austin" },
     { id: "525357602", label: "Texas Restoration Group" },
   ]);
