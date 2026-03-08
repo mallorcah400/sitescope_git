@@ -91,10 +91,10 @@ export default function App() {
   const [url, setUrl] = useState("https://");
   const [gadsId, setGadsId] = useState("");
   const [ga4Properties, setGa4Properties] = useState([
-    { id: "395152487", label: "Property 1" },
-    { id: "286595968", label: "Property 2" },
-    { id: "515895713", label: "Property 3" },
-    { id: "525357602", label: "Property 4" },
+    { id: "395152487", label: "Austin Clean Spaces" },
+    { id: "286595968", label: "BOR Corp" },
+    { id: "515895713", label: "BOR Austin" },
+    { id: "525357602", label: "Texas Restoration Group" },
   ]);
   const [activeProperty, setActiveProperty] = useState(0);
 
